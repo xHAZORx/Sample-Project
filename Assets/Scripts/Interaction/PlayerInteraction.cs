@@ -3,6 +3,8 @@ using TMPro;
 
 public class PlayerInteraction : MonoBehaviour
 {
+    public static bool IsUsingMonitor = false;
+
     [SerializeField] float interactDistance = 3f;
     [SerializeField] Camera playerCamera;
     [SerializeField] GameObject interactPrompt;
@@ -10,14 +12,20 @@ public class PlayerInteraction : MonoBehaviour
     private IInteractable currentInteractable;
 
     void Update()
+{
+    if (IsUsingMonitor)
     {
-        CheckForInteractable();
-
-        if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
-        {
-            currentInteractable.Interact();
-        }
+        interactPrompt.SetActive(false);
+        return;
     }
+
+    CheckForInteractable();
+
+    if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
+    {
+        currentInteractable.Interact();
+    }
+}
 
     private void CheckForInteractable()
     {

@@ -26,12 +26,15 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Update()
-    {
-        HandleMovement();
-        HandleJump();
-        HandleCrouch();
-        ApplyGravity();
-    }
+{
+    if (PlayerInteraction.IsUsingMonitor)
+        return;
+
+    HandleMovement();
+    HandleJump();
+    HandleCrouch();
+    ApplyGravity();
+}
 
     private Vector3 moveDirection;
 

@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
-    [SerializeField] float mouseSensitivity = 200f;
-
-    [SerializeField] Transform playerBody;
+    [SerializeField] private float mouseSensitivity = 200f;
+    [SerializeField] private Transform playerBody;
 
     private float xRotation = 0f;
 
@@ -16,6 +15,10 @@ public class MouseLook : MonoBehaviour
 
     void Update()
     {
+        // Stop looking around while using the CCTV monitor
+        if (PlayerInteraction.IsUsingMonitor)
+            return;
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
