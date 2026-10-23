@@ -1,4 +1,6 @@
+
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MouseLook : MonoBehaviour
 {
@@ -11,16 +13,25 @@ public class MouseLook : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        xRotation = transform.localEulerAngles.x;
+
+        if (xRotation > 180f)
+            xRotation -= 360f;
     }
 
     void Update()
     {
-        // Stop looking around while using the CCTV monitor
         if (PlayerInteraction.IsUsingMonitor)
             return;
 
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        if (Mouse.current == null)
+            return;
+
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+
+        float mouseX = mouseDelta.x * mouseSensitivity * Time.deltaTime;
+        float mouseY = mouseDelta.y * mouseSensitivity * Time.deltaTime;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);

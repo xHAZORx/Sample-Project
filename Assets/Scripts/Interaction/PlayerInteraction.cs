@@ -1,5 +1,6 @@
+
 using UnityEngine;
-using TMPro;
+using UnityEngine.InputSystem;
 
 public class PlayerInteraction : MonoBehaviour
 {
@@ -8,32 +9,52 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] float interactDistance = 3f;
     [SerializeField] Camera playerCamera;
     [SerializeField] GameObject interactPrompt;
+    [SerializeField] InputActionReference interactAction;
 
     private IInteractable currentInteractable;
 
-    void Update()
-{
-    if (IsUsingMonitor)
+    private void OnEnable()
     {
-        interactPrompt.SetActive(false);
-        return;
+        if (interactAction != null)
+            interactAction.action.Enable();
     }
 
-    CheckForInteractable();
-
-    if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
+    private void OnDisable()
     {
-        currentInteractable.Interact();
+        if (interactAction != null)
+            interactAction.action.Disable();
     }
-}
+
+    private void Update()
+    {
+        if (IsUsingMonitor)
+        {
+            interactPrompt.SetActive(false);
+            currentInteractable = null;
+            return;
+        }
+
+        CheckForInteractable();
+
+        if (interactAction != null &&
+            interactAction.action.WasPressedThisFrame() &&
+            currentInteractable != null)
+        {
+            currentInteractable.Interact();
+        }
+    }
 
     private void CheckForInteractable()
     {
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        Ray ray = new Ray(
+            playerCamera.transform.position,
+            playerCamera.transform.forward
+        );
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
         {
-            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+            IInteractable interactable =
+                hit.collider.GetComponentInParent<IInteractable>();
 
             if (interactable != null)
             {
